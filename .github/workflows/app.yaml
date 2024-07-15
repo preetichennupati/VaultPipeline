@@ -1,0 +1,23 @@
+name: CI/CD for react Todo 
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+    build:
+        # ...
+        steps:
+            # ...
+            - name: Import Secrets
+              id: import-secrets
+              uses: hashicorp/vault-action@v2
+              with:
+                url: http://44.203.41.202:8200
+                token: ${{ secrets.VAULT_TOKEN }}
+                secrets: |
+                    secret/data/ci/aws accessKey | AWS_ACCESS_KEY_ID ;
+                    secret/data/ci/aws secretKey | AWS_SECRET_ACCESS_KEY ;
+                    secret/data/ci npm_token
+            # ...
