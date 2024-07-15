@@ -1,0 +1,11 @@
+name: CI/CD with Self-Hosted Runner
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    # Add your build and test steps here
