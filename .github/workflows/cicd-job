@@ -2,9 +2,8 @@ name: CI/CD with Self-Hosted Runner
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
     build:
