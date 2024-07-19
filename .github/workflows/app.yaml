@@ -11,7 +11,7 @@ jobs:
       # ...
       steps:
         # ...
-        - name: Import Secrets
+        - name: Import Vault Secrets
           id: import-secrets
           uses: hashicorp/vault-action@v2
           with:
@@ -19,8 +19,4 @@ jobs:
             token: ${{ secrets.VAULT_TOKEN }}
             secrets: |
                 demoVault/data k1 ;
-                
-                # demoVault/data accessKey | AWS_ACCESS_KEY_ID ;
-                # demoVault/data secretKey | AWS_SECRET_ACCESS_KEY ;
-                # demoVault/data npm_token
         # ...
