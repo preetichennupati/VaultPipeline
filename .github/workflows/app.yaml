@@ -15,10 +15,12 @@ jobs:
           id: import-secrets
           uses: hashicorp/vault-action@v2
           with:
-            url: http://44.203.41.202:8200
+            url: http://18.233.166.63:8200
             token: ${{ secrets.VAULT_TOKEN }}
             secrets: |
-                secret/data/ci/aws accessKey | AWS_ACCESS_KEY_ID ;
-                secret/data/ci/aws secretKey | AWS_SECRET_ACCESS_KEY ;
-                secret/data/ci npm_token
+                demoVault/data k1 ;
+                
+                # demoVault/data accessKey | AWS_ACCESS_KEY_ID ;
+                # demoVault/data secretKey | AWS_SECRET_ACCESS_KEY ;
+                # demoVault/data npm_token
         # ...
