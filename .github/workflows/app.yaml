@@ -1,22 +1,10 @@
-name: CI/CD for React Todo 
-
+name: Actions Runner Controller Demo
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-    build:
-      runs-on: self-hosted
-      # ...
-      steps:
-        # ...
-        - name: Import Vault Secrets
-          id: import-secrets
-          uses: hashicorp/vault-action@v2
-          with:
-            url: http://18.233.166.63:8200
-            token: ${{ secrets.VAULT_TOKEN }}
-            secrets: |
-                demoVault/data k1 ;
-        # ...
+  Explore-GitHub-Actions:
+    # You need to use the INSTALLATION_NAME from the previous step
+    runs-on: arc-runner-set
+    steps:
+    - run: echo "🎉 This job uses runner scale set runners!"
