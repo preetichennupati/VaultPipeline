@@ -1,46 +1,46 @@
-name: Docker Push
-on: 
-  push: 
-    branches: [ "main" ]
-  
+on:
+  # Trigger on any GitHub release.
+  # If you want to trigger on tag creation, use `create`. However, this also
+  # fires for branch creation events which will break this example workflow.
+  - release
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Remove AWS credentials file
-      run: |
-        if [ -f ~/.aws/credentials ]; then
-          rm ~/.aws/credentials
-          echo "Deleted ~/.aws/credentials"
-        else
-          echo "~/.aws/credentials does not exist"
-        fi
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push the image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG: latest
-      run: |
-        # Build a docker container and push it to ECR 
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        echo "Pushing image to ECR..."
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build & Push Docker image
+        id: docker-build
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: myorg/myimage
+          # Use the git tag as the image tag.
+          # github.ref format is like `refs/tags/v0.0.1`, so we strip the the
+          # `refs/tags/` prefix and export this for later use.
+          IMAGE_TAG: ${{ github.ref }}
+        run: |
+          tag=${IMAGE_TAG##refs/tags/}
+          echo "Tag is $tag"
+          echo "::set-output name=tag::$tag"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$tag .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$tag
+      - name: Scan Docker image
+        id: docker-scan
+        uses: alexjurkiewicz/ecr-scan-image@v1.7.1
+        with:
+          repository: myorg/myimage
+          tag: ${{ steps.docker-build.outputs.tag }}
+          # fail_threshold: medium
+          # ignore_list: |
+          #   CVE-2014-7654321
+          #   CVE-2014-456132
+      # Access scan results in later steps
+      - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
