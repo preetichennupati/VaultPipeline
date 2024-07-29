@@ -33,15 +33,3 @@ jobs:
           echo "::set-output name=tag::$tag"
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$tag .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$tag
-      - name: Scan Docker image
-        id: docker-scan
-        uses: alexjurkiewicz/ecr-scan-image@v1.7.1
-        with:
-          repository: myorg/myimage
-          tag: ${{ steps.docker-build.outputs.tag }}
-          # fail_threshold: medium
-          # ignore_list: |
-          #   CVE-2014-7654321
-          #   CVE-2014-456132
-      # Access scan results in later steps
-      - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
