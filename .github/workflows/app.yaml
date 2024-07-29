@@ -13,7 +13,7 @@ jobs:
         id: import-secrets
         uses: hashicorp/vault-action@v2
         with:
-          url: http://54.165.226.78:8200/:8200
+          url: http://54.165.226.78:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
               secret/aws accessKey | AWS_ACCESS_KEY_ID ;
