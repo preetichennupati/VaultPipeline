@@ -3,7 +3,7 @@ on:
   # If you want to trigger on tag creation, use `create`. However, this also
   # fires for branch creation events which will break this example workflow.
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 jobs:
   deploy:
     runs-on: ubuntu-latest
