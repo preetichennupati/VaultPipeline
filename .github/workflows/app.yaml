@@ -16,8 +16,8 @@ jobs:
           url: http://54.165.226.78:8200
           token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-              aws/keys accessKey | AWS_ACCESS_KEY_ID ;
-              aws/keys secretKey | AWS_SECRET_ACCESS_KEY ;
+              secret/aws/keys accessKey | AWS_ACCESS_KEY_ID ;
+              secret/aws/keys secretKey | AWS_SECRET_ACCESS_KEY ;
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
