@@ -11,6 +11,15 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Remove AWS credentials file
+      run: |
+        if [ -f ~/.aws/credentials ]; then
+          rm ~/.aws/credentials
+          echo "Deleted ~/.aws/credentials"
+        else
+          echo "~/.aws/credentials does not exist"
+        fi
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
